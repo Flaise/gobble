@@ -443,6 +443,26 @@ module.exports = function () {
 				});
 			});
 		});
+
+		it( 'should not decode a buffer when requested not to', function () {
+			var source = gobble( 'tmp/foo' ), count = 0;
+
+			function plugin ( input, options ) {
+				count++;
+				assert.equal( input.constructor, Buffer );
+
+				return input.toString( 'base64' );
+			}
+			plugin.defaults = {sourceEncoding: 'buffer'};
+
+			task = source.transform( plugin ).build({
+				dest: 'tmp/output'
+			});
+
+			return task.then( function () {
+				assert.equal( count, 3 );
+			});
+		});
 	});
 
 
